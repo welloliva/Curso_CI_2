@@ -9,14 +9,9 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-    env: 
-      HOST:localhost
-      PORT:5432
-      USER:root
-      PASSWORD:root
-      DBNAME:root
     strategy:
       matrix:
+        os: ['ubuntu-latest', 'ubuntu-20.04', 'ubuntu-22.04']
         go_version: ['1.18', '1.17', '1.19']
     steps:
     - uses: actions/checkout@v3
@@ -39,11 +34,17 @@ jobs:
       run: docker-compose up -d
 
     - name: Test
+      env:
+        HOST: localhost
+        PORT: 5432
+        USER: root
+        PASSWORD: root
+        DBNAME: root
       run: go test -v main_test.go 
       
   build:
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: ['ubuntu-latest', 'ubuntu-20.04', 'ubuntu-22.04']
