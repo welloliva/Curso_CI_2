@@ -44,19 +44,18 @@ jobs:
       
   build:
     needs: test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: ['ubuntu-latest', 'ubuntu-20.04', 'ubuntu-22.04']
+    runs-on: 'ubuntu-latest'
     steps:
     - uses: actions/checkout@v3
     - name: Build
       run: go build -v main.go
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.2.1-node20
+      with:    
+        name: programa    
+        path: main
 
   docker: 
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Build Docker Image
-      run: docker build -t my-app .
+    needs: build   
+    uses: ./.github/workflows/Docker.yml
+    secrets: inherit
